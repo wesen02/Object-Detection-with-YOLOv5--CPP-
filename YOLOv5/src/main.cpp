@@ -210,38 +210,18 @@ void Yolo::detect(Mat &frame)
     vector<int> nms_result;
     NMSBoxes(boxes, confidences, modelScoreThreshold, modelNMSThreshold, nms_result);
 
-    // vector<Detection> detections{};
     for (unsigned long i = 0; i < nms_result.size(); ++i)
     {
-
         int idx = nms_result[i];
-
-        Detection result;
-        result.class_id = class_ids[idx];
-        result.confidence = confidences[idx];
-
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<int> dis(0, 255);
-        result.color = cv::Scalar(dis(gen),
-                                  dis(gen),
-                                  dis(gen));
-
-        result.className = classes[result.class_id];
-        result.box = boxes[idx];
-
-        detections.push_back(result);
-
-        // cout << result.class_id;
 
         Rect box = boxes[idx];
         this->drawPred(class_ids[idx], confidences[idx], box.x, box.y,
-                       box.x + box.width, box.y + box.height, frame, result.color);
+                       box.x + box.width, box.y + box.height, frame);
     }
 }
 
 void Yolo::drawPred(int classId, float conf, int left, int top, int right,
-                    int bottom, Mat &frame, Scalar color)
+                    int bottom, Mat &frame)
 {
     rectangle(frame, Point(left, top), Point(right, bottom), colors[classId], 3);
 
